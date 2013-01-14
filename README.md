@@ -41,10 +41,12 @@ The default logger does nothing, override if you want to see log output.
 
 This will send statistics to StatsD in the supplied bucket name and will generate logs like this:
 
-I, [2012-12-17T16:15:41.004660 #2341]  INFO -- : Start: update.combinations Matcher generating possible combinations
-I, [2012-12-17T16:15:41.008624 #2341]  INFO -- : Done:  100 combinations generated
-I, [2012-12-17T16:15:41.009512 #2341]  INFO -- : Rate:  20746.88796680498 combinations per second
-I, [2012-12-17T16:15:41.004660 #2341]  INFO -- : End:  update.combinations
+
+    INFO -- : Start: update.combinations Matcher generating possible combinations
+    INFO -- : Done:  100 combinations generated
+    INFO -- : Rate:  20746.88796680498 combinations per second
+    INFO -- : End:  update.combinations
+
 
 Any exceptions that occur will be logged nicely. Exceptions will abort the process.
 
