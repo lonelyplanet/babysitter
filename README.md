@@ -1,6 +1,6 @@
 # Babysitter
 
-A ruby gem that uses ![Fozzie](http://github.com/lonelyplanet/fozzie) to report progress on long-running tasks.
+A ruby gem that uses [Fozzie](http://github.com/lonelyplanet/fozzie) to report progress on long-running tasks.
 When provided with a Logger it will output statistics of progress to the logs.
 
 ## Installation
