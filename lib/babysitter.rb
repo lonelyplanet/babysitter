@@ -1,4 +1,4 @@
-require 'fozzie'
+
 
 require_relative "babysitter/version"
 require_relative "babysitter/null_logger"

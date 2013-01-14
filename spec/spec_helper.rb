@@ -4,8 +4,8 @@
 # loaded once.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-
-Bundler.require
+require 'awesome_print'
+require 'fozzie'
 require 'babysitter'
 
 RSpec.configure do |config|
