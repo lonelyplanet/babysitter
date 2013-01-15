@@ -53,7 +53,7 @@ Any exceptions that occur will be logged nicely. Exceptions will abort the proce
 ## Development
 
     $ git clone git@github.com:lonelyplanet/babysitter.git
-    $ cd roverjoe
+    $ cd babysitter
 
 ## Contributing
 
