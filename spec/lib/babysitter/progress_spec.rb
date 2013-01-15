@@ -115,6 +115,29 @@ module Babysitter
           end
         end # context 'when logging every 10th call, and the block increments the counter 7 times, each with a count of 9, and identifies counted objects' do
 
+        context "when the block logs a warning" do 
+          let(:start_block_with_warning) do
+            Proc.new do |monitor|
+              monitor.warn('my warning message')
+            end
+          end
+
+          it 'calls logger.info with the warning message' do
+            ProgressCounter.any_instance.stub(:logger).and_return(logger)
+            logger.should_receive(:warn).with( "my warning message")
+            Stats.stub!(:increment)
+            subject.start(&start_block_with_warning)
+          end
+
+          it 'calls Stats.count with warning bucket name' do
+            expected_bucket_name = bucket_name.split('.') + [:iterations, :warnings]
+            Stats.should_receive(:increment).with(expected_bucket_name)
+            subject.start(&start_block_with_warning)
+          end
+
+
+        end
+
       end
 
     end
