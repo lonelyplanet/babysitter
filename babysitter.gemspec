@@ -6,8 +6,8 @@ require 'babysitter/version'
 Gem::Specification.new do |gem|
   gem.name          = "babysitter"
   gem.version       = Babysitter::VERSION
-  gem.authors       = ["Nicolas Overloop"]
-  gem.email         = ["noverloop@gmail.com"]
+  gem.authors       = ["Nicolas Overloop", "Paul Grayson", "Andy Roberts"]
+  gem.email         = ["noverloop@gmail.com", "paul.grayson@lonelyplanet.com", "coder@onesandthrees.com"]
   gem.description   = %q{Babysits long-running processes and reports progress or failures}
   gem.summary       = %q{Babysits long-running processes and reports progress or failures}
   gem.homepage      = ""

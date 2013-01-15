@@ -7,7 +7,7 @@ When provided with a Logger it will output statistics of progress to the logs.
 
 Add this line to your application's Gemfile:
 
-    gem "babysitter", git: 'git@github.com:lonelyplanet/babysitter.git'
+    gem "babysitter"
 
 And then execute:
 
