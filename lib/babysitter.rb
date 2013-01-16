@@ -11,7 +11,7 @@ require_relative "babysitter/monitor"
 module Babysitter
 
   def self.monitor(*args)
-    Progress.new(*args)
+    Monitor.new(*args)
   end
 
   def self.configuration
