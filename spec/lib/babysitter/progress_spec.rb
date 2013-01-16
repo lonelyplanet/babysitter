@@ -134,8 +134,27 @@ module Babysitter
             Stats.should_receive(:increment).with(expected_bucket_name)
             subject.start(&start_block_with_warning)
           end
+        end
 
+        context "when the block logs an error" do 
+          let(:start_block_with_error) do
+            Proc.new do |monitor|
+              monitor.error('my error message')
+            end
+          end
 
+          it 'calls logger.error with the error message' do
+            ProgressCounter.any_instance.stub(:logger).and_return(logger)
+            logger.should_receive(:error).with( "my error message")
+            Stats.stub!(:increment)
+            subject.start(&start_block_with_error)
+          end
+
+          it 'calls Stats.count with error bucket name' do
+            expected_bucket_name = bucket_name.split('.') + [:iterations, :errors]
+            Stats.should_receive(:increment).with(expected_bucket_name)
+            subject.start(&start_block_with_error)
+          end
         end
 
       end

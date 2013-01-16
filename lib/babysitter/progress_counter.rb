@@ -32,6 +32,11 @@ module Babysitter
       send_warning_stat
     end
 
+    def error(*args)
+      logger.error(*args)
+      send_error_stat
+    end
+
     private
 
     def block_number(count)
@@ -60,6 +65,10 @@ module Babysitter
 
     def send_warning_stat
       Stats.increment stat_name+[counting, :warnings] unless stat_name.nil?
+    end
+
+    def send_error_stat
+      Stats.increment stat_name+[counting, :errors] unless stat_name.nil?
     end
 
   end
