@@ -19,9 +19,9 @@ module Babysitter
       @template = template
       new_counting = opts.delete(:counting)
       @counting = new_counting unless new_counting.nil?
-      @log_this_time = block_number(@count) != block_number(@count + amount)
+      log_this_time = block_number(@count) != block_number(@count + amount)
       @count += amount
-      log_counter_messsage if log_this_time?
+      log_counter_messsage if log_this_time
       @timer_start = Time.now
     end
 
@@ -31,10 +31,6 @@ module Babysitter
 
     def final_report?
       !(template.nil? or template.empty?) && count != logged_count
-    end
-
-    def log_this_time?
-      @log_this_time
     end
 
     def log_counter_messsage

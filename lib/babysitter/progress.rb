@@ -2,13 +2,10 @@ module Babysitter
   class Progress
     include Logging
 
-    attr_reader :counting, :template, :logged_count, :stat_name
+    attr_reader :counting, :stat_name, :counter
     attr_accessor :log_every
 
-    attr_reader :counter
-
     def initialize(log_every, stat_name=nil)
-      @logged_count = 0
       @stat_name = stat_name
       @counting = :iterations
       @log_every = log_every
