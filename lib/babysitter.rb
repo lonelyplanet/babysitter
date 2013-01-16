@@ -6,6 +6,7 @@ require_relative "babysitter/configuration"
 require_relative "babysitter/logging"
 require_relative "babysitter/progress"
 require_relative "babysitter/monitor"
+require_relative "babysitter/counter"
 
 
 module Babysitter

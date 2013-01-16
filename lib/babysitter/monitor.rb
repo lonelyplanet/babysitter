@@ -24,7 +24,7 @@ module Babysitter
         raise
       end
 
-      Stats.gauge stat_name+[counter.counting, :total], counter.count
+      counter.send_total_stats
       counter.final_report
       logger.info "End:   #{log_msg}"
       result

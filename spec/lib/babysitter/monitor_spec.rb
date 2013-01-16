@@ -75,7 +75,7 @@ module Babysitter
           end
 
           it 'calls logger.info with each done message once' do
-            Progress.any_instance.stub(:logger).and_return(logger)
+            Counter.any_instance.stub(:logger).and_return(logger)
             [5,10].each { |inc| logger.should_receive(:info).with( "Done:  incrementing by #{inc} things").once }
             subject.start('short message', 5, &start_block_two_increments)
           end
@@ -95,7 +95,7 @@ module Babysitter
           end
 
           it 'calls logger.info with each done message once' do
-            Progress.any_instance.stub(:logger).and_return(logger)
+            Counter.any_instance.stub(:logger).and_return(logger)
             [5,7].each { |inc| logger.should_receive(:info).with( "Done:  incrementing by #{inc} things").once }
             subject.start('short message', 5, &start_block_seven_increments)
           end
@@ -109,7 +109,7 @@ module Babysitter
           end
 
           it 'calls logger.info with increments 18,27,36,45,54,63' do
-            Progress.any_instance.stub(:logger).and_return(logger)
+            Counter.any_instance.stub(:logger).and_return(logger)
             [18,27,36,45,54,63].each { |inc| logger.should_receive(:info).with( "Done:  incrementing by #{inc} things").once }
             subject.start('short message', 10, &start_block_three_increments)
           end
