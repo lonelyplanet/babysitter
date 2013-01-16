@@ -4,7 +4,7 @@ require_relative "babysitter/version"
 require_relative "babysitter/null_logger"
 require_relative "babysitter/configuration"
 require_relative "babysitter/logging"
-require_relative "babysitter/progress_counter"
+require_relative "babysitter/progress"
 require_relative "babysitter/monitor"
 
 
