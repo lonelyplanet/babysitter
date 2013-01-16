@@ -1,5 +1,5 @@
 module Babysitter
-  class Progress
+  class Monitor
     include Logging
 
     attr_accessor :stat_name
