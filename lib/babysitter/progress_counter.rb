@@ -27,6 +27,16 @@ module Babysitter
       log_counter_messsage if !(template.nil? or template.empty?) && count != logged_count
     end
 
+    def warn(*args)
+      logger.warn(*args)
+      send_warning_stat
+    end
+
+    def error(*args)
+      logger.error(*args)
+      send_error_stat
+    end
+
     private
 
     def block_number(count)
@@ -51,6 +61,14 @@ module Babysitter
 
     def send_progress_stats(progress)
       Stats.count stat_name+[counting, :progress], progress unless stat_name.nil?
+    end
+
+    def send_warning_stat
+      Stats.increment stat_name+[counting, :warnings] unless stat_name.nil?
+    end
+
+    def send_error_stat
+      Stats.increment stat_name+[counting, :errors] unless stat_name.nil?
     end
 
   end
