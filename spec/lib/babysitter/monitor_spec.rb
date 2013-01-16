@@ -75,7 +75,7 @@ module Babysitter
           end
 
           it 'calls logger.info with each done message once' do
-            ProgressCounter.any_instance.stub(:logger).and_return(logger)
+            Progress.any_instance.stub(:logger).and_return(logger)
             [5,10].each { |inc| logger.should_receive(:info).with( "Done:  incrementing by #{inc} things").once }
             subject.start('short message', 5, &start_block_two_increments)
           end
@@ -95,7 +95,7 @@ module Babysitter
           end
 
           it 'calls logger.info with each done message once' do
-            ProgressCounter.any_instance.stub(:logger).and_return(logger)
+            Progress.any_instance.stub(:logger).and_return(logger)
             [5,7].each { |inc| logger.should_receive(:info).with( "Done:  incrementing by #{inc} things").once }
             subject.start('short message', 5, &start_block_seven_increments)
           end
@@ -109,7 +109,7 @@ module Babysitter
           end
 
           it 'calls logger.info with increments 18,27,36,45,54,63' do
-            ProgressCounter.any_instance.stub(:logger).and_return(logger)
+            Progress.any_instance.stub(:logger).and_return(logger)
             [18,27,36,45,54,63].each { |inc| logger.should_receive(:info).with( "Done:  incrementing by #{inc} things").once }
             subject.start('short message', 10, &start_block_three_increments)
           end
@@ -123,7 +123,7 @@ module Babysitter
           end
 
           it 'calls logger.info with the warning message' do
-            ProgressCounter.any_instance.stub(:logger).and_return(logger)
+            Progress.any_instance.stub(:logger).and_return(logger)
             logger.should_receive(:warn).with( "my warning message")
             Stats.stub!(:increment)
             subject.start(&start_block_with_warning)
@@ -144,7 +144,7 @@ module Babysitter
           end
 
           it 'calls logger.error with the error message' do
-            ProgressCounter.any_instance.stub(:logger).and_return(logger)
+            Progress.any_instance.stub(:logger).and_return(logger)
             logger.should_receive(:error).with( "my error message")
             Stats.stub!(:increment)
             subject.start(&start_block_with_error)

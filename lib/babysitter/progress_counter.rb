@@ -1,5 +1,5 @@
 module Babysitter
-  class ProgressCounter
+  class Progress
     include Logging
 
     attr_reader :count, :counting, :template, :logged_count, :stat_name

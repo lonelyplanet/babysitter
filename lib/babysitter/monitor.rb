@@ -11,7 +11,7 @@ module Babysitter
     def start(msg=nil, log_every=100, &blk)
       raise ArgumentError, "Stats bucket name must not be blank" if stat_name.nil? or stat_name.empty?
       log_msg = format_log_message(msg)
-      counter = ProgressCounter.new(log_every, stat_name)
+      counter = Progress.new(log_every, stat_name)
       logger.info "Start: #{log_msg}"
 
       begin
