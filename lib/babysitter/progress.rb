@@ -2,56 +2,51 @@ module Babysitter
   class Progress
     include Logging
 
-    attr_accessor :stat_name
+    attr_reader :counting, :stat_name, :counter
+    attr_accessor :log_every
 
-    def initialize(stat_name=nil)
-      @stat_name = convert_stat_name_to_array(stat_name)
+    def initialize(log_every, stat_name=nil)
+      @stat_name = stat_name
+      @counting = :iterations
+      @log_every = log_every
+      @counter = Counter.new(log_every, stat_name: stat_name, counting: counting)
     end
 
-    def start(msg=nil, log_every=100, &blk)
-      raise ArgumentError, "Stats bucket name must not be blank" if stat_name.nil? or stat_name.empty?
-      log_msg = format_log_message(msg)
-      counter = ProgressCounter.new(log_every, stat_name)
-      logger.info "Start: #{log_msg}"
-
-      begin
-        result = Stats.time_to_do stat_name+[:overall] do
-          blk.call(counter)
-        end
-      rescue Exception => e
-        counter.final_report rescue nil
-        log_exception_details( log_msg, e )
-        raise
-      end
-
-      Stats.gauge stat_name+[counter.counting, :total], counter.count
-      counter.final_report
-      logger.info "End:   #{log_msg}"
-      result
+    def inc(*args)
+      counter.inc(*args)
     end
 
-    def completed(msg)
-      logger.info "Done:  #{msg}"
+    def count
+      counter.count
+    end
+
+    def final_report
+      counter.log_counter_messsage if counter.final_report?
+    end
+
+    def warn(*args)
+      logger.warn(*args)
+      send_warning_stat
+    end
+
+    def error(*args)
+      logger.error(*args)
+      send_error_stat
+    end
+
+    def send_total_stats
+      counter.send_total_stats
     end
 
     private
 
-    def format_log_message(msg)
-      log_msg = stat_name.join('.')
-      [log_msg,msg].compact.join(' ')
+    def send_warning_stat
+      Stats.increment stat_name+[counting, :warnings] unless stat_name.nil?
     end
 
-    def convert_stat_name_to_array(stat_name)
-      stat_name.is_a?(Array) ? stat_name : stat_name.split('.') unless stat_name.nil? or stat_name.empty?
+    def send_error_stat
+      Stats.increment stat_name+[counting, :errors] unless stat_name.nil?
     end
 
-    def log_exception_details( msg, exception )
-      logger.error "Aborting: #{msg} due to exception #{exception.class}: #{exception}"
-      if exception.backtrace
-        exception.backtrace.each { |line| Babysitter.logger.error "    #{line}" }
-      end
-    end
   end
-
-
 end

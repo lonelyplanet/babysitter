@@ -1,16 +1,17 @@
 module Babysitter
-  class ProgressCounter
+  class Counter
     include Logging
 
-    attr_reader :count, :counting, :template, :logged_count, :stat_name
-    attr_accessor :log_every
+    attr_reader :count, :log_every, :template, :logged_count, :stat_name, :counting
 
-    def initialize(log_every, stat_name=nil)
+    attr_accessor :template
+
+    def initialize(log_every, opts)
       @count = 0
       @logged_count = 0
-      @stat_name = stat_name
-      @counting = :iterations
       @log_every = log_every
+      @stat_name = opts.delete(:stat_name)
+      @counting = opts.delete(:counting)
       @timer_start = Time.now
     end
 
@@ -21,26 +22,15 @@ module Babysitter
       log_this_time = block_number(@count) != block_number(@count + amount)
       @count += amount
       log_counter_messsage if log_this_time
+      @timer_start = Time.now
     end
-
-    def final_report
-      log_counter_messsage if !(template.nil? or template.empty?) && count != logged_count
-    end
-
-    def warn(*args)
-      logger.warn(*args)
-      send_warning_stat
-    end
-
-    def error(*args)
-      logger.error(*args)
-      send_error_stat
-    end
-
-    private
 
     def block_number(count)
       count / @log_every
+    end
+
+    def final_report?
+      !(template.nil? or template.empty?) && count != logged_count
     end
 
     def log_counter_messsage
@@ -63,12 +53,8 @@ module Babysitter
       Stats.count stat_name+[counting, :progress], progress unless stat_name.nil?
     end
 
-    def send_warning_stat
-      Stats.increment stat_name+[counting, :warnings] unless stat_name.nil?
-    end
-
-    def send_error_stat
-      Stats.increment stat_name+[counting, :errors] unless stat_name.nil?
+    def send_total_stats
+      Stats.gauge stat_name+[counting, :total], count
     end
 
   end
