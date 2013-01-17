@@ -24,14 +24,14 @@ module Babysitter
       counter.log_counter_messsage if counter.final_report?
     end
 
-    def warn(*args)
-      logger.warn(*args)
-      send_warning_stat
+    def warn(partial_bucket_name, message)
+      logger.warn(message)
+      send_warning_stat(partial_bucket_name)
     end
 
-    def error(*args)
-      logger.error(*args)
-      send_error_stat
+    def error(partial_bucket_name, message)
+      logger.error(message)
+      send_error_stat(partial_bucket_name)
     end
 
     def send_total_stats
@@ -40,12 +40,12 @@ module Babysitter
 
     private
 
-    def send_warning_stat
-      Stats.increment stat_name+[counting, :warnings] unless stat_name.nil?
+    def send_warning_stat(partial_bucket_name)
+      Stats.increment stat_name+[partial_bucket_name, :warnings] unless stat_name.nil?
     end
 
-    def send_error_stat
-      Stats.increment stat_name+[counting, :errors] unless stat_name.nil?
+    def send_error_stat(partial_bucket_name)
+      Stats.increment stat_name+[partial_bucket_name, :errors] unless stat_name.nil?
     end
 
   end

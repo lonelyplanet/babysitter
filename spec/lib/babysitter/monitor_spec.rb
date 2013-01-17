@@ -118,7 +118,7 @@ module Babysitter
         context "when the block logs a warning" do 
           let(:start_block_with_warning) do
             Proc.new do |monitor|
-              monitor.warn('my warning message')
+              monitor.warn(:my_warning_bucket, 'my warning message')
             end
           end
 
@@ -130,7 +130,7 @@ module Babysitter
           end
 
           it 'calls Stats.count with warning bucket name' do
-            expected_bucket_name = bucket_name.split('.') + [:iterations, :warnings]
+            expected_bucket_name = bucket_name.split('.') + [:my_warning_bucket, :warnings]
             Stats.should_receive(:increment).with(expected_bucket_name)
             subject.start(&start_block_with_warning)
           end
@@ -139,7 +139,7 @@ module Babysitter
         context "when the block logs an error" do 
           let(:start_block_with_error) do
             Proc.new do |monitor|
-              monitor.error('my error message')
+              monitor.error(:my_error_bucket, 'my error message')
             end
           end
 
@@ -151,7 +151,7 @@ module Babysitter
           end
 
           it 'calls Stats.count with error bucket name' do
-            expected_bucket_name = bucket_name.split('.') + [:iterations, :errors]
+            expected_bucket_name = bucket_name.split('.') + [:my_error_bucket, :errors]
             Stats.should_receive(:increment).with(expected_bucket_name)
             subject.start(&start_block_with_error)
           end
