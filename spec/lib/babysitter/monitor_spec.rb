@@ -157,6 +157,24 @@ module Babysitter
           end
         end
 
+        context 'when the block increments 2 times at intervals of 2 seconds' do
+          let(:start_block_for_timing) do
+            Proc.new do |counter|
+              2.times do
+                sleep 2
+                counter.inc('doing increment',1)
+              end
+            end
+          end
+
+          it 'calculates a rate just under 0.5 per second' do
+            Counter.any_instance.should_receive(:send_rate_stats) do |rate|
+              rate.should be_within(0.05).of(0.45)
+            end
+            subject.start(&start_block_for_timing)
+          end
+        end
+
       end
 
     end
