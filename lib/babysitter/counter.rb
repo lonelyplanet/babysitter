@@ -22,7 +22,6 @@ module Babysitter
       log_this_time = block_number(@count) != block_number(@count + amount)
       @count += amount
       log_counter_messsage if log_this_time
-      @timer_start = Time.now
     end
 
     def block_number(count)
