@@ -161,15 +161,17 @@ module Babysitter
           let(:start_block_for_timing) do
             Proc.new do |counter|
               2.times do
-                sleep 2
+                Timecop.travel(Time.now+2) # move on 2 seconds
                 counter.inc('doing increment',1)
               end
             end
           end
+          before(:each) { Timecop.travel(Time.now) }
+          after(:each)  { Timecop.return           }
 
-          it 'calculates a rate just under 0.5 per second' do
+          it 'calculates a rate close to 0.5 per second' do
             Counter.any_instance.should_receive(:send_rate_stats) do |rate|
-              rate.should be_within(0.05).of(0.45)
+              rate.should be_within(0.01).of(0.5)
             end
             subject.start(&start_block_for_timing)
           end
