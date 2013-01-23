@@ -25,13 +25,11 @@ module Babysitter
     end
 
     def warn(partial_bucket_name, message)
-      logger.warn(message)
-      send_warning_stat(partial_bucket_name)
+      logger_with_fozzie_for(partial_bucket_name).warn(message)
     end
 
     def error(partial_bucket_name, message)
-      logger.error(message)
-      send_error_stat(partial_bucket_name)
+      logger_with_fozzie_for(partial_bucket_name).error(message)
     end
 
     def send_total_stats
@@ -40,13 +38,51 @@ module Babysitter
 
     private
 
-    def send_warning_stat(partial_bucket_name)
-      Stats.increment stat_name+[partial_bucket_name, :warnings] unless stat_name.nil?
+    def logger_with_fozzie_for(partial_bucket_name)
+      @loggers ||= {}
+      @loggers[partial_bucket_name] ||= LoggerWithFozzie.new(fuller_stat_name(partial_bucket_name), progress: self )
     end
 
-    def send_error_stat(partial_bucket_name)
-      Stats.increment stat_name+[partial_bucket_name, :errors] unless stat_name.nil?
+    def fuller_stat_name(partial_bucket_name)
+      stat_name+[partial_bucket_name] 
     end
 
   end
+
+  class LoggerWithFozzie
+
+    attr_accessor :stat_name_prefix, :progress
+
+    STATS_SUFFIX_BY_METHOD = { warn: :warnings, error: :errors }
+
+    def initialize(stat_name_prefix, opts) 
+      @stat_name_prefix = stat_name_prefix 
+      @progress = opts.delete(:progress)
+    end
+
+    # TODO: This bears a very strong resemblance to the two methods warn and error
+    # on Babysitter::Progress . How to DRY this ?
+
+    def method_missing(meth, *opts)
+      raise "bad call for #{meth.inspect}" unless %w{ warn error }.include?(meth.to_s)
+      increment(stats_suffix_from_method(meth))
+      progress.logger.send(meth, *opts)
+    end
+
+    def stats_suffix_from_method(meth)
+      STATS_SUFFIX_BY_METHOD[meth]
+    end
+
+    def increment(stat_name_suffix)
+      Stats.increment full_stat_name(stat_name_suffix)
+    end
+
+    private
+
+    def full_stat_name(stat_name_suffix)
+      stat_name_prefix + [stat_name_suffix]
+    end
+
+  end
+
 end
