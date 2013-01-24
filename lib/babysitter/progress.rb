@@ -36,12 +36,12 @@ module Babysitter
       counter.send_total_stats
     end
 
-    private
-
     def logger_with_fozzie_for(partial_bucket_name)
       @loggers ||= {}
       @loggers[partial_bucket_name] ||= LoggerWithFozzie.new(fuller_stat_name(partial_bucket_name), progress: self )
     end
+
+    private
 
     def fuller_stat_name(partial_bucket_name)
       stat_name+[partial_bucket_name] 
@@ -69,6 +69,8 @@ module Babysitter
       progress.logger.send(meth, *opts)
     end
 
+    private
+
     def stats_suffix_from_method(meth)
       STATS_SUFFIX_BY_METHOD[meth]
     end
@@ -76,8 +78,6 @@ module Babysitter
     def increment(stat_name_suffix)
       Stats.increment full_stat_name(stat_name_suffix)
     end
-
-    private
 
     def full_stat_name(stat_name_suffix)
       stat_name_prefix + [stat_name_suffix]
