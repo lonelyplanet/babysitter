@@ -25,20 +25,20 @@ module Babysitter
     end
 
     def warn(partial_bucket_name, message)
-      logger_with_fozzie_for(partial_bucket_name).warn(message)
+      logger_with_stats_for(partial_bucket_name).warn(message)
     end
 
     def error(partial_bucket_name, message)
-      logger_with_fozzie_for(partial_bucket_name).error(message)
+      logger_with_stats_for(partial_bucket_name).error(message)
     end
 
     def send_total_stats
       counter.send_total_stats
     end
 
-    def logger_with_fozzie_for(partial_bucket_name)
+    def logger_with_stats_for(partial_bucket_name)
       @loggers ||= {}
-      @loggers[partial_bucket_name] ||= LoggerWithFozzie.new(fuller_stat_name(partial_bucket_name), tracker: self )
+      @loggers[partial_bucket_name] ||= LoggerWithStats.new(fuller_stat_name(partial_bucket_name), tracker: self )
     end
 
     private
@@ -49,24 +49,29 @@ module Babysitter
 
   end
 
-  class LoggerWithFozzie
+  class LoggerWithStats
+    include Logging
 
-    attr_accessor :stat_name_prefix, :tracker
+    attr_accessor :stat_name_prefix
 
-    STATS_SUFFIX_BY_METHOD = { warn: :warnings, error: :errors }
+    STATS_SUFFIX_BY_METHOD = { warn: :warnings, error: :errors, fatal: :fatals }
 
     def initialize(stat_name_prefix, opts) 
       @stat_name_prefix = stat_name_prefix 
-      @tracker = opts.delete(:tracker)
     end
 
-    # TODO: This bears a very strong resemblance to the two methods warn and error
-    # on Babysitter::Tracker . How to DRY this ?
-
     def method_missing(meth, *opts)
-      raise "bad call for #{meth.inspect}" unless %w{ warn error }.include?(meth.to_s)
-      increment(stats_suffix_from_method(meth))
-      tracker.logger.send(meth, *opts)
+      unless %w{ info debug error fatal}.include?(meth.to_s)
+        super
+        return
+      end
+      stats_suffix_from_method(meth).tap{ |suffix| increment(suffix) if suffix }
+      logger.send(meth, *opts)
+    end
+
+    def warn(*opts)
+      increment(stats_suffix_from_method(:warn))
+      logger.warn(*opts)
     end
 
     private

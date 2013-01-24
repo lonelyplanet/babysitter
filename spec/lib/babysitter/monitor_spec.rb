@@ -122,7 +122,7 @@ module Babysitter
             end
           end
           before(:each) do
-            Tracker.any_instance.stub(:logger).and_return(logger)
+            Babysitter.stub(:logger).and_return(logger)
             logger.stub!(:warn)
             Stats.stub!(:increment)
           end
@@ -146,7 +146,7 @@ module Babysitter
             end
           end
           before(:each) do
-            Tracker.any_instance.stub(:logger).and_return(logger)
+            Babysitter.stub(:logger).and_return(logger)
             logger.stub!(:error)
             Stats.stub!(:increment)
           end
