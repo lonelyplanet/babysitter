@@ -24,27 +24,27 @@ module Babysitter
       counter.log_counter_messsage if counter.final_report?
     end
 
-    def warn(partial_bucket_name, message)
-      logger_with_stats_for(partial_bucket_name).warn(message)
+    def warn(topic_name, message)
+      logger_with_stats_for(topic_name).warn(message)
     end
 
-    def error(partial_bucket_name, message)
-      logger_with_stats_for(partial_bucket_name).error(message)
+    def error(topic_name, message)
+      logger_with_stats_for(topic_name).error(message)
     end
 
     def send_total_stats
       counter.send_total_stats
     end
 
-    def logger_with_stats_for(partial_bucket_name)
+    def logger_with_stats_for(topic_name)
       @loggers ||= {}
-      @loggers[partial_bucket_name] ||= LoggerWithStats.new(fuller_stat_name(partial_bucket_name), tracker: self )
+      @loggers[topic_name] ||= LoggerWithStats.new(stats_prefix_for_topic(topic_name))
     end
 
     private
 
-    def fuller_stat_name(partial_bucket_name)
-      stat_name+[partial_bucket_name] 
+    def stats_prefix_for_topic(topic_name)
+      stat_name+[topic_name] 
     end
 
   end
@@ -56,7 +56,7 @@ module Babysitter
 
     STATS_SUFFIX_BY_METHOD = { warn: :warnings, error: :errors, fatal: :fatals }
 
-    def initialize(stat_name_prefix, opts) 
+    def initialize(stat_name_prefix) 
       @stat_name_prefix = stat_name_prefix 
     end
 
