@@ -1,5 +1,5 @@
 module Babysitter
-  class Progress
+  class Tracker
     include Logging
 
     attr_reader :counting, :stat_name, :counter
@@ -38,7 +38,7 @@ module Babysitter
 
     def logger_with_fozzie_for(partial_bucket_name)
       @loggers ||= {}
-      @loggers[partial_bucket_name] ||= LoggerWithFozzie.new(fuller_stat_name(partial_bucket_name), progress: self )
+      @loggers[partial_bucket_name] ||= LoggerWithFozzie.new(fuller_stat_name(partial_bucket_name), tracker: self )
     end
 
     private
@@ -51,22 +51,22 @@ module Babysitter
 
   class LoggerWithFozzie
 
-    attr_accessor :stat_name_prefix, :progress
+    attr_accessor :stat_name_prefix, :tracker
 
     STATS_SUFFIX_BY_METHOD = { warn: :warnings, error: :errors }
 
     def initialize(stat_name_prefix, opts) 
       @stat_name_prefix = stat_name_prefix 
-      @progress = opts.delete(:progress)
+      @tracker = opts.delete(:tracker)
     end
 
     # TODO: This bears a very strong resemblance to the two methods warn and error
-    # on Babysitter::Progress . How to DRY this ?
+    # on Babysitter::Tracker . How to DRY this ?
 
     def method_missing(meth, *opts)
       raise "bad call for #{meth.inspect}" unless %w{ warn error }.include?(meth.to_s)
       increment(stats_suffix_from_method(meth))
-      progress.logger.send(meth, *opts)
+      tracker.logger.send(meth, *opts)
     end
 
     private

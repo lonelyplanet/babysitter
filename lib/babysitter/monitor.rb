@@ -11,21 +11,21 @@ module Babysitter
     def start(msg=nil, log_every=100, &blk)
       raise ArgumentError, "Stats bucket name must not be blank" if stat_name.nil? or stat_name.empty?
       log_msg = format_log_message(msg)
-      progress = Progress.new(log_every, stat_name)
+      tracker = Tracker.new(log_every, stat_name)
       logger.info "Start: #{log_msg}"
 
       begin
         result = Stats.time_to_do stat_name+[:overall] do
-          blk.call(progress)
+          blk.call(tracker)
         end
       rescue Exception => e
-        progress.final_report rescue nil
+        tracker.final_report rescue nil
         log_exception_details( log_msg, e )
         raise
       end
 
-      progress.send_total_stats
-      progress.final_report
+      tracker.send_total_stats
+      tracker.final_report
       logger.info "End:   #{log_msg}"
       result
     end
