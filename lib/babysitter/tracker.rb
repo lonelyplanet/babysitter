@@ -1,5 +1,5 @@
 module Babysitter
-  class Progress
+  class Tracker
     include Logging
 
     attr_reader :counting, :stat_name, :counter
@@ -24,29 +24,29 @@ module Babysitter
       counter.log_counter_messsage if counter.final_report?
     end
 
-    def warn(partial_bucket_name, message)
-      logger.warn(message)
-      send_warning_stat(partial_bucket_name)
+    def warn(topic_name, message)
+      logger_with_stats_for(topic_name).warn(message)
     end
 
-    def error(partial_bucket_name, message)
-      logger.error(message)
-      send_error_stat(partial_bucket_name)
+    def error(topic_name, message)
+      logger_with_stats_for(topic_name).error(message)
     end
 
     def send_total_stats
       counter.send_total_stats
     end
 
-    private
-
-    def send_warning_stat(partial_bucket_name)
-      Stats.increment stat_name+[partial_bucket_name, :warnings] unless stat_name.nil?
+    def logger_with_stats_for(topic_name)
+      @loggers ||= {}
+      @loggers[topic_name] ||= LoggerWithStats.new(stats_prefix_for_topic(topic_name))
     end
 
-    def send_error_stat(partial_bucket_name)
-      Stats.increment stat_name+[partial_bucket_name, :errors] unless stat_name.nil?
+    private
+
+    def stats_prefix_for_topic(topic_name)
+      stat_name+[topic_name] 
     end
 
   end
+
 end
