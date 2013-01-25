@@ -31,10 +31,11 @@ The default logger does nothing, override if you want to see log output.
 ### Monitoring
 
     monitor = Babysitter.monitor("statsd.bucket.name")
-    monitor.start("Workername: description") do |progress|
+    monitor.start("Workername: description") do |tracker|
        things_to_do.each do |work|
           do_some work
-          progress.inc("Workername: {{count}} tasks completed", 1, counting: :work_things) # report progress here
+          tracker.error('Something bad') if something_bad?
+          tracker.inc("Workername: {{count}} tasks completed", 1, counting: :things_to_do) # report progress here
        end
     end
 

@@ -121,11 +121,14 @@ module Babysitter
               monitor.warn(:my_warning_bucket, 'my warning message')
             end
           end
+          before(:each) do
+            Babysitter.stub(:logger).and_return(logger)
+            logger.stub!(:warn)
+            Stats.stub!(:increment)
+          end
 
           it 'calls logger.info with the warning message' do
-            Progress.any_instance.stub(:logger).and_return(logger)
             logger.should_receive(:warn).with( "my warning message")
-            Stats.stub!(:increment)
             subject.start(&start_block_with_warning)
           end
 
@@ -142,11 +145,14 @@ module Babysitter
               monitor.error(:my_error_bucket, 'my error message')
             end
           end
+          before(:each) do
+            Babysitter.stub(:logger).and_return(logger)
+            logger.stub!(:error)
+            Stats.stub!(:increment)
+          end
 
           it 'calls logger.error with the error message' do
-            Progress.any_instance.stub(:logger).and_return(logger)
             logger.should_receive(:error).with( "my error message")
-            Stats.stub!(:increment)
             subject.start(&start_block_with_error)
           end
 
