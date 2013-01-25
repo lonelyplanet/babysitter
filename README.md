@@ -34,7 +34,8 @@ The default logger does nothing, override if you want to see log output.
     monitor.start("Workername: description") do |tracker|
        things_to_do.each do |work|
           do_some work
-          tracker.error('Something bad') if something_bad?
+          tracker.error(:badness,'Something bad happened') if something_bad?
+          tracker.warn(:suspicions,'Something supicious happenedd') if something_bad?
           tracker.inc("Workername: {{count}} tasks completed", 1, counting: :things_to_do) # report progress here
        end
     end
@@ -43,10 +44,15 @@ The default logger does nothing, override if you want to see log output.
 This will send statistics to StatsD in the supplied bucket name and will generate logs like this:
 
 
-    INFO -- : Start: update.combinations Matcher generating possible combinations
+    INFO -- : Start: statsd.bucket.name Matcher generating possible combinations
     INFO -- : Done:  100 combinations generated
     INFO -- : Rate:  20746.88796680498 combinations per second
-    INFO -- : End:  update.combinations
+    INFO -- : End:   statsd.bucket.name 
+
+Logging statistics will incremented for bucket names
+
+    statsd.bucket.name.badness.errors
+    statsd.bucket.name.suspicions.warnings
 
 
 Any exceptions that occur will be logged nicely. Exceptions will abort the process.
