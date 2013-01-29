@@ -10,7 +10,7 @@ module Babysitter
         topic_arn: 'my-topic-arn'
       } }
       let(:sns) { double :sns, topics: { 'my-topic-arn' => topic } }
-      let(:topic) { double :topic, publish: nil }
+      let(:topic) { double :topic, publish: nil, display_name: "A topic" }
       before :each do
         AWS::SNS.stub(:new).and_return(sns)
       end
@@ -20,18 +20,25 @@ module Babysitter
         subject
       end
 
+      it 'validates the topic by checking it has a display name' do
+        topic.should_receive(:display_name)
+        subject
+      end
+
       describe '.notify' do
         let(:message) { "the message" }
+        let(:notification_subject) { "the subject" }
+
         it 'publishes to the topic specified' do
           topic.should_receive(:publish)
 
-          subject.notify(message)
+          subject.notify(notification_subject, message)
         end
 
         it 'publishes the message' do
-          topic.should_receive(:publish).with(message)
+          topic.should_receive(:publish).with(message, hash_including(subject: notification_subject))
 
-          subject.notify(message)
+          subject.notify(notification_subject, message)
         end
       end
     end
