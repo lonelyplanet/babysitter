@@ -8,6 +8,7 @@ require_relative "babysitter/logger_with_stats"
 require_relative "babysitter/tracker"
 require_relative "babysitter/monitor"
 require_relative "babysitter/counter"
+require_relative "babysitter/exception_notifiers"
 require 'fozzie'
 
 module Babysitter
@@ -28,5 +29,8 @@ module Babysitter
     configuration.logger
   end
 
+  def self.exception_notifiers
+    configuration.exception_notifiers
+  end
 
 end
