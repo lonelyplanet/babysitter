@@ -165,16 +165,36 @@ module Babysitter
 
         context 'when the block raises an error' do
           let(:error) { RuntimeError.new(error_message) }
+          let(:backtrace) { 3.times.map { |i| "Line #{i}"} }
           let(:error_message) { 'A big fat error' }
+          let(:expected_message) { "Aborting: #{bucket_name} due to exception RuntimeError: #{error_message}" }
           let(:start_block_with_error) { Proc.new { raise error } }
           before(:each) do
+            error.stub(:backtrace).and_return(backtrace)
             Babysitter.stub(:logger).and_return(logger)
+            Babysitter.stub(:exception_notifiers).and_return(2.times.map { double notify: nil  })
             logger.stub!(:error)
             Stats.stub!(:increment)
           end
 
           it 'calls logger.error with the exeption details' do
-            logger.should_receive(:error).with("Aborting: #{bucket_name} due to exception RuntimeError: #{error_message}")
+            logger.should_receive(:error).with(expected_message)
+            backtrace.each do |line|
+              logger.should_receive(:error).with(/\w*#{line}/)
+            end
+
+            begin
+              subject.start(&start_block_with_error)
+            rescue
+            end
+          end
+          
+          it 'calls each exception notifier with the exception details' do
+            message = [expected_message].concat(backtrace).join("\n")
+
+            Babysitter.exception_notifiers.each do |exception_notifier|
+              exception_notifier.should_receive(:notify).with(message)
+            end
 
             begin
               subject.start(&start_block_with_error)

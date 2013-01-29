@@ -46,10 +46,11 @@ module Babysitter
     end
 
     def log_exception_details(msg, exception)
-      logger.error "Aborting: #{msg} due to exception #{exception.class}: #{exception}"
-      if exception.backtrace
-        exception.backtrace.each { |line| logger.error "    #{line}" }
-      end
+      lines = ["Aborting: #{msg} due to exception #{exception.class}: #{exception}"]
+      lines.concat(exception.backtrace) if exception.backtrace
+
+      lines.each { |line| logger.error(line) }
+      Babysitter.exception_notifiers.each { |notifier| notifier.notify(lines.join("\n")) }
     end
   end
 
