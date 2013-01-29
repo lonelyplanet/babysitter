@@ -38,4 +38,13 @@ describe Babysitter do
     end
   end
 
+  describe '.exception_notifiers' do
+    let(:exception_notifiers) { double('notifiers').as_null_object}
+
+    it 'returns the notifiers from the configuration' do
+      Babysitter::Configuration.any_instance.stub(:exception_notifiers).and_return(exception_notifiers)
+      Babysitter.exception_notifiers.should eql(exception_notifiers)
+    end
+  end
+
 end

@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.add_dependency 'fozzie'
   gem.add_dependency 'timecop'
+  gem.add_dependency 'aws-sdk'
 
   gem.add_development_dependency 'awesome_print'
   gem.add_development_dependency 'rspec'

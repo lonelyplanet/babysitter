@@ -28,6 +28,18 @@ Or install it yourself as:
 
 The default logger does nothing, override if you want to see log output.
 
+### Amazon Simple Notification Service Integration
+
+Babysitter can also make use of Amazons Simple Notification Service to provide notifications of when exceptions occur.
+
+    Babysitter.configure do |c|
+      c.enable_simple_notification_service(
+        access_key_id: "YOUR_ACCESS_KEY_ID",
+        secret_address_key: "YOUR_SECRET_ADDRESS_KEY",
+        topic_arn: "my-topic-arn"
+      )
+    end
+
 ### Monitoring
 
     monitor = Babysitter.monitor("statsd.bucket.name")
