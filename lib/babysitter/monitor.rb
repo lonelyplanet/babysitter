@@ -20,7 +20,7 @@ module Babysitter
         end
       rescue Exception => e
         tracker.final_report rescue nil
-        log_exception_details( log_msg, e )
+        log_exception_details(log_msg, e)
         raise
       end
 
@@ -45,7 +45,7 @@ module Babysitter
       stat_name.is_a?(Array) ? stat_name : stat_name.split('.') unless stat_name.nil? or stat_name.empty?
     end
 
-    def log_exception_details( msg, exception )
+    def log_exception_details(msg, exception)
       logger.error "Aborting: #{msg} due to exception #{exception.class}: #{exception}"
       if exception.backtrace
         exception.backtrace.each { |line| logger.error "    #{line}" }

@@ -163,6 +163,26 @@ module Babysitter
           end
         end
 
+        context 'when the block raises an error' do
+          let(:error) { RuntimeError.new(error_message) }
+          let(:error_message) { 'A big fat error' }
+          let(:start_block_with_error) { Proc.new { raise error } }
+          before(:each) do
+            Babysitter.stub(:logger).and_return(logger)
+            logger.stub!(:error)
+            Stats.stub!(:increment)
+          end
+
+          it 'calls logger.error with the exeption details' do
+            logger.should_receive(:error).with("Aborting: #{bucket_name} due to exception RuntimeError: #{error_message}")
+
+            begin
+              subject.start(&start_block_with_error)
+            rescue
+            end
+          end
+        end
+
         context 'when the block increments 2 times at intervals of 2 seconds' do
           let(:start_block_for_timing) do
             Proc.new do |counter|
