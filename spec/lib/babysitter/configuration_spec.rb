@@ -21,7 +21,7 @@ module Babysitter
       let (:sns_exception_notifier) { double }
       let (:valid_params) { { 
         access_key_id: "an-access-key",
-        secret_address_key: "a-secret-address-key",
+        secret_access_key: "a-secret-address-key",
         topic_arn: "my-topic-arn" 
       } }
 
@@ -35,8 +35,8 @@ module Babysitter
       end
 
       it 'requires a secret address key' do
-        valid_params.delete :secret_address_key
-        -> { subject.enable_simple_notification_service(valid_params) }.should raise_error(ArgumentError, /secret_address_key/)
+        valid_params.delete :secret_access_key
+        -> { subject.enable_simple_notification_service(valid_params) }.should raise_error(ArgumentError, /secret_access_key/)
       end
 
       it 'requires a topic arn' do

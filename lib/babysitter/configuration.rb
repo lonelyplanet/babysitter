@@ -14,7 +14,7 @@ module Babysitter
     end
 
     def enable_simple_notification_service(opts = {})
-      [:access_key_id, :secret_address_key, :topic_arn].each do |key|
+      [:access_key_id, :secret_access_key, :topic_arn].each do |key|
         raise ArgumentError, "#{key} is required" unless opts.has_key?(key)
       end
 
