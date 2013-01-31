@@ -3,11 +3,12 @@ require 'aws-sdk'
 module Babysitter
   module ExceptionNotifiers
     class SimpleNotificationService
-      def initialize(opts)
-        access_key = opts.delete :access_key_id
-        secret_access_key = opts.delete :secret_access_key
-        @sns = AWS::SNS.new(access_key_id: access_key, secret_access_key: secret_access_key)
-        @topic = @sns.topics[opts.delete(:topic_arn)]
+      def initialize(opts = {})
+        topic_arn = opts.delete(:topic_arn)
+        raise ArgumentError, "topic_arn is required." if topic_arn.nil?
+
+        @sns = AWS::SNS.new(opts)
+        @topic = @sns.topics[topic_arn]
         validate_topic
       end
 

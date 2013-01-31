@@ -20,28 +20,12 @@ module Babysitter
     describe 'enabling Amazon simple notification service integration' do
       let (:sns_exception_notifier) { double }
       let (:valid_params) { { 
-        access_key_id: "an-access-key",
-        secret_access_key: "a-secret-address-key",
+        arbritary_key: "some-value",
         topic_arn: "my-topic-arn" 
       } }
 
       before :each do
         Babysitter::ExceptionNotifiers::SimpleNotificationService.stub(:new).and_return(sns_exception_notifier)
-      end
-
-      it 'requires an access key id' do
-        valid_params.delete :access_key_id
-        -> { subject.enable_simple_notification_service(valid_params) }.should raise_error(ArgumentError, /access_key_id/)
-      end
-
-      it 'requires a secret address key' do
-        valid_params.delete :secret_access_key
-        -> { subject.enable_simple_notification_service(valid_params) }.should raise_error(ArgumentError, /secret_access_key/)
-      end
-
-      it 'requires a topic arn' do
-        valid_params.delete :topic_arn
-        -> { subject.enable_simple_notification_service(valid_params) }.should raise_error(ArgumentError, /topic_arn/)
       end
 
       it 'adds an exception notifier' do
