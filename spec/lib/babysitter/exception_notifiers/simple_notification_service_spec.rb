@@ -15,6 +15,10 @@ module Babysitter
         AWS::SNS.stub(:new).and_return(sns)
       end
 
+      it 'requires a topic_arn' do
+        -> { SimpleNotificationService.new() }.should raise_error(ArgumentError, /topic_arn/)
+      end
+
       it 'uses the options passed to configure the credentials for sns' do
         AWS::SNS.should_receive(:new).with(valid_opts.reject { |key| key == :topic_arn } )
         subject
