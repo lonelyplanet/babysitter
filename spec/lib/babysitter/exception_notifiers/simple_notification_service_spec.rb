@@ -44,6 +44,15 @@ module Babysitter
 
           subject.notify(notification_subject, message)
         end
+
+        it "shortens the subject to 100 characters if necessary" do
+          shortened_subject = 97.times.map { "x" }.join + "..."
+          original_subject = 101.times.map { "x" }.join
+
+          topic.should_receive(:publish).with(message, hash_including(subject: shortened_subject))
+
+          subject.notify(original_subject, message)
+        end
       end
     end
   end
