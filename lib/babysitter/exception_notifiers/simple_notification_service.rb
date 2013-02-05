@@ -13,7 +13,12 @@ module Babysitter
       end
 
       def notify(subject, msg)
-        @topic.publish(msg, subject: subject)
+        sanitised_subject = if subject.size > 100
+                              subject[0..96] + "..."
+                            else
+                              subject
+                            end
+        @topic.publish(msg, subject: sanitised_subject)
       end
 
       private
