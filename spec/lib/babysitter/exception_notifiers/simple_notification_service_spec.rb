@@ -53,6 +53,12 @@ module Babysitter
 
           subject.notify(original_subject, message)
         end
+
+        it "handles empty subject" do
+          topic.should_receive(:publish).with(message, hash_including(subject: "(no subject)"))
+
+          subject.notify("", message)
+        end
       end
     end
   end
