@@ -19,13 +19,11 @@ module Babysitter
       private
 
       def sanitise_subject(subject)
-        if subject.size > 100
-          subject[0..96] + "..."
-        elsif subject.empty?
-          "(no subject)"
-        else
-          subject
-        end
+        sanitised = /\s*([^\x00-\x1F]*)/.match(subject)[1]
+
+        return "(no subject)" if sanitised.empty?
+        return sanitised[0..96] + "..." if sanitised.size > 100
+        sanitised
       end
 
       def validate_topic

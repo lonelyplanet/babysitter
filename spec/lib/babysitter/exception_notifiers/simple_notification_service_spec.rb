@@ -54,6 +54,25 @@ module Babysitter
           subject.notify(original_subject, message)
         end
 
+        it "strips control characters" do
+          expected_subject = "this is the subject"
+          original_subject = "#{expected_subject}"
+          32.times.each { |code| original_subject << code.chr }
+
+          topic.should_receive(:publish).with(message, hash_including(subject: expected_subject))
+
+          subject.notify(original_subject, message)
+        end
+
+        it "strips leading whitespace" do
+          expected_subject = "this is the subject"
+          original_subject = "  #{expected_subject}"
+
+          topic.should_receive(:publish).with(message, hash_including(subject: expected_subject))
+
+          subject.notify(original_subject, message)
+        end
+
         it "handles empty subject" do
           topic.should_receive(:publish).with(message, hash_including(subject: "(no subject)"))
 
