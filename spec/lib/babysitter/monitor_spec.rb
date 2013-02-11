@@ -193,7 +193,7 @@ module Babysitter
             message = [expected_message].concat(backtrace).join("\n")
 
             Babysitter.exception_notifiers.each do |exception_notifier|
-              exception_notifier.should_receive(:notify).with(error_message, message)
+              exception_notifier.should_receive(:notify).with('RuntimeError', message)
             end
 
             begin

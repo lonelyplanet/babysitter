@@ -50,7 +50,7 @@ module Babysitter
       lines.concat(exception.backtrace) if exception.backtrace
 
       lines.each { |line| logger.error(line) }
-      Babysitter.exception_notifiers.each { |notifier| notifier.notify(exception.to_s, lines.join("\n")) }
+      Babysitter.exception_notifiers.each { |notifier| notifier.notify(exception.class.name, lines.join("\n")) }
     end
   end
 
