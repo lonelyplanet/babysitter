@@ -4,9 +4,14 @@ module Babysitter
   module ExceptionNotifiers
     describe SimpleNotificationService do
       subject { SimpleNotificationService.new(valid_opts) }
+      let(:get_credentials_lambda) { -> {
+        {
+          access_key_id: 'an-access-key-id',
+          secret_access_key: 'a-secret-address-key',
+        }
+      } }
       let(:valid_opts) { {
-        access_key_id: 'an-access-key-id',
-        secret_access_key: 'a-secret-address-key',
+        credentials: get_credentials_lambda,
         topic_arn: 'my-topic-arn'
       } }
       let(:sns) { double :sns, topics: { 'my-topic-arn' => topic } }
@@ -16,11 +21,22 @@ module Babysitter
       end
 
       it 'requires a topic_arn' do
-        -> { SimpleNotificationService.new() }.should raise_error(ArgumentError, /topic_arn/)
+        valid_opts.delete :topic_arn
+        -> { SimpleNotificationService.new(valid_opts) }.should raise_error(ArgumentError, /topic_arn/)
+      end
+
+      it "requires credentials" do
+        valid_opts.delete :credentials
+        -> { SimpleNotificationService.new(valid_opts) }.should raise_error(ArgumentError, /credentials/)
+      end
+
+      it 'requires a block to retrieve AWS credentials' do
+        valid_opts[:credentials] = {}
+        -> { SimpleNotificationService.new(valid_opts) }.should raise_error(ArgumentError, /credentials/)
       end
 
       it 'uses the options passed to configure the credentials for sns' do
-        AWS::SNS.should_receive(:new).with(valid_opts.reject { |key| key == :topic_arn } )
+        AWS::SNS.should_receive(:new).with(get_credentials_lambda.call)
         subject
       end
 
@@ -32,6 +48,11 @@ module Babysitter
       describe '.notify' do
         let(:message) { "the message" }
         let(:notification_subject) { "the subject" }
+
+        it 'again uses the options passed to configure the credentials for sns' do
+          AWS::SNS.should_receive(:new).with(get_credentials_lambda.call).twice
+          subject.notify(notification_subject, message)
+        end
 
         it 'publishes to the topic specified' do
           topic.should_receive(:publish)
