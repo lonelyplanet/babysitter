@@ -34,11 +34,16 @@ Babysitter can also make use of Amazons Simple Notification Service to provide n
 
     Babysitter.configure do |c|
       c.enable_simple_notification_service(
-        access_key_id: "YOUR_ACCESS_KEY_ID",
-        secret_address_key: "YOUR_SECRET_ADDRESS_KEY",
-        topic_arn: "my-topic-arn"
+        topic_arn: "my-topic-arn",
+        credentials: -> { 
+          access_key_id: "YOUR_ACCESS_KEY_ID",
+          secret_address_key: "YOUR_SECRET_ADDRESS_KEY",
+        }
       )
     end
+
+The credentials should be supplied as a Proc so that they are only requested when they are required. This supports the use of temporary
+credentials with IAM and prevents any credentials fetched at configuration time having expired at some point later when an error occurs.
 
 ### Monitoring
 
