@@ -22,17 +22,17 @@ module Babysitter
 
       it 'requires a topic_arn' do
         valid_opts.delete :topic_arn
-        -> { SimpleNotificationService.new(valid_opts) }.should raise_error(ArgumentError, /topic_arn/)
+        -> { subject }.should raise_error(ArgumentError, /topic_arn/)
       end
 
       it "requires credentials" do
         valid_opts.delete :credentials
-        -> { SimpleNotificationService.new(valid_opts) }.should raise_error(ArgumentError, /credentials/)
+        -> { subject }.should raise_error(ArgumentError, /credentials/)
       end
 
       it 'requires a block to retrieve AWS credentials' do
         valid_opts[:credentials] = {}
-        -> { SimpleNotificationService.new(valid_opts) }.should raise_error(ArgumentError, /credentials/)
+        -> { subject }.should raise_error(ArgumentError, /credentials/)
       end
 
       it 'uses the options passed to configure the credentials for sns' do
