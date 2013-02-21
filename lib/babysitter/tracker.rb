@@ -2,18 +2,26 @@ module Babysitter
   class Tracker
     include Logging
 
-    attr_reader :counting, :stat_name, :counter
+    attr_reader :counting, :stat_name, :timer_start
     attr_accessor :log_every
 
     def initialize(log_every, stat_name=nil)
       @stat_name = stat_name
-      @counting = :iterations
+      @counting = default_counting
       @log_every = log_every
-      @counter = Counter.new(log_every, stat_name: stat_name, counting: counting)
+      @timer_start = Time.now
+      @counters = Hash.new do |h, k|
+        h[k] = Counter.new(log_every, stat_name: stat_name, counting: k, timer_start: timer_start)
+      end
     end
 
-    def inc(*args)
-      counter.inc(*args)
+    def inc(template, inc=1, opts={})
+      counting = opts[:counting] || default_counting
+      counter(counting).inc(template, inc, opts)
+    end
+
+    def counter(counting=default_counting)
+      @counters[counting]
     end
 
     def count
@@ -21,7 +29,9 @@ module Babysitter
     end
 
     def final_report
-      counter.log_counter_messsage if counter.final_report?
+      @counters.values.each do |counter|
+        counter.log_counter_messsage if counter.final_report?
+      end
     end
 
     def warn(topic_name, message)
@@ -33,7 +43,9 @@ module Babysitter
     end
 
     def send_total_stats
-      counter.send_total_stats
+      @counters.values.each do |counter|
+        counter.send_total_stats
+      end
     end
 
     def logger_with_stats_for(topic_name)
@@ -45,6 +57,10 @@ module Babysitter
 
     def stats_prefix_for_topic(topic_name)
       stat_name+[topic_name] 
+    end
+
+    def default_counting
+      :iterations
     end
 
   end

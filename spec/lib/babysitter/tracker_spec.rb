@@ -75,7 +75,68 @@ module Babysitter
 
     end # describe 'logger returned by logger_with_stats_for(:something)' do
 
-  end
+    describe 'counting:' do
+
+      context 'inc called 3 times, with no :counting' do
+        before(:each) do
+          subject.inc('some message', 3)
+          logger.stub(:info)
+        end
+
+        it 'the counter should be 3' do 
+          subject.counter.count.should == 3
+        end
+
+        context 'and then incremented by 5 with no :counting' do
+          before(:each) do
+            subject.inc('some message', 5)
+          end
+
+          it 'the counter should be 8' do 
+            subject.counter.count.should == 8
+          end
+        end
+
+        context 'and then incremented by 5 with :counting => apples' do
+          before(:each) do
+            subject.inc('some message', 5, counting: :apples)
+          end
+
+          it 'the counter should be 3' do 
+            subject.counter.count.should == 3
+          end
+
+          it 'the apples counter should be 5' do 
+            subject.counter(:apples).count.should == 5
+          end
+          
+          context 'and then incremented by 4 with :counting => oranges' do
+            before(:each) do
+              subject.inc('some message', 4, counting: :oranges)
+            end
+
+            it 'the counter should be 3' do 
+              subject.counter.count.should == 3
+            end
+
+            it 'the apples counter should be 5' do 
+              subject.counter(:apples).count.should == 5
+            end
+
+            it 'the oranges counter should be 4' do 
+              subject.counter(:oranges).count.should == 4
+            end
+            
+          end
+          
+        end
+
+      end
+
+    end # describe 'counting:' do
+
+  end # describe Tracker do
+
 end
 
 
