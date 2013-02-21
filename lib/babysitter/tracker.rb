@@ -2,7 +2,7 @@ module Babysitter
   class Tracker
     include Logging
 
-    attr_reader :counting, :stat_name
+    attr_reader :counting, :stat_name, :timer_start
     attr_accessor :log_every
 
     def initialize(log_every, stat_name=nil)
@@ -10,8 +10,9 @@ module Babysitter
       @counting = :iterations
       @log_every = log_every
       # @counter = Counter.new(log_every, stat_name: stat_name, counting: counting)
+      @timer_start = Time.now
       @counters = Hash.new do |h, k|
-        h[k] = Counter.new(log_every, stat_name: stat_name, counting: k)
+        h[k] = Counter.new(log_every, stat_name: stat_name, counting: k, timer_start: timer_start)
       end
     end
 
