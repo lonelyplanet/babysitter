@@ -115,6 +115,24 @@ module Babysitter
           end
         end # context 'when logging every 10th call, and the block increments the counter 7 times, each with a count of 9, and identifies counted objects' do
 
+        context 'when the block logs 3 increments to oranges counter, and 5 increments to apples:' do 
+          let(:start_block_3_oranges_5_apples) do
+            Proc.new do |tracker|
+              3.times{ tracker.inc('{{count}} oranges counted', 1, counting: :orangey_things) }
+              5.times{ tracker.inc('{{count}} apples counted', 1, counting: :appley_things) }
+            end
+          end
+          
+          it 'calls logger with 3 oranges counted and 5 apples counted' do
+            Counter.any_instance.stub(:logger).and_return(logger)
+            logger.stub(:info).with(anything) 
+            logger.should_receive(:info).with(/3 oranges counted/)
+            logger.should_receive(:info).with(/5 apples counted/)
+            subject.start('short message', 10, &start_block_3_oranges_5_apples)
+          end
+
+        end # context 'when the block logs 3 increments to oranges counter, and 5 increments to apples:' do 
+
         context "when the block logs a warning" do 
           let(:start_block_with_warning) do
             Proc.new do |monitor|
