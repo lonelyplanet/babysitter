@@ -12,7 +12,7 @@ module Babysitter
       @log_every = log_every
       @stat_name = opts.delete(:stat_name)
       @counting = opts.delete(:counting)
-      @timer_start = Time.now
+      @timer_start = opts.delete(:timer_start) || Time.now
     end
 
     def inc( template, amount=1, opts={} )
