@@ -9,6 +9,7 @@ require_relative "babysitter/tracker"
 require_relative "babysitter/monitor"
 require_relative "babysitter/counter"
 require_relative "babysitter/exception_notifiers"
+require_relative "babysitter/logger_with_deprecation"
 require 'fozzie'
 
 module Babysitter
