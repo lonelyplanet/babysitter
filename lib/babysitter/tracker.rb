@@ -6,12 +6,12 @@ module Babysitter
     attr_accessor :log_every
 
     def initialize(log_every, stat_name=nil)
-      @stat_name = stat_name
+      @stat_name = stat_name.is_a?(String) ? stat_name.split('.') : stat_name
       @counting = default_counting
       @log_every = log_every
       @timer_start = Time.now
       @counters = Hash.new do |h, k|
-        h[k] = Counter.new(log_every, stat_name: stat_name, counting: k, timer_start: timer_start)
+        h[k] = Counter.new(log_every, stat_name: @stat_name, counting: k, timer_start: timer_start)
       end
     end
 
