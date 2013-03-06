@@ -11,6 +11,14 @@ module Babysitter
       Babysitter.stub(:logger).and_return(logger)
     end
 
+    describe '.new' do
+      let(:stat_bucket_prefix) { 'my.stat.bucket.prefix' }
+
+      it 'converts string stat_name to array' do
+        subject.stat_name.should == %w(my stat bucket prefix)
+      end
+    end
+
     describe '#logger_with_stats_for' do
 
       it 'returns the same logger when passed the same symbol twice' do
