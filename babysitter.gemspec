@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'fozzie'
   gem.add_dependency 'timecop'
   gem.add_dependency 'aws-sdk'
+  gem.add_dependency 'rake'
 
   gem.add_development_dependency 'awesome_print'
   gem.add_development_dependency 'rspec'
